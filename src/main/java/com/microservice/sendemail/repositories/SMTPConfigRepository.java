@@ -6,5 +6,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SMTPConfigRepository extends CrudRepository <SMTPConfigEntity, Integer>{
-
+    SMTPConfigEntity findSMTPConfigEntityBySenderEmail(String senderEmail);
 }
