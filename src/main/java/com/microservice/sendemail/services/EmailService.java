@@ -20,33 +20,36 @@ public class EmailService {
     @Autowired
     SMTPConfigRepository smtpConfigRepository;
 
-    private boolean verifyEmail(String emailSender, String emailRecipient) {
+    private boolean verifyEmail(String emailRecipient) {
         boolean flag;
         String regex = "^[A-Za-z0-9+_.-] +@ (.+)$";
         Pattern pattern = Pattern.compile(regex);
-        flag = pattern.matcher(emailSender).matches();
         flag = pattern.matcher(emailRecipient).matches();
         return flag;
     }
 
     public boolean sendEmail(EmailEntitiy email) {
-        Properties prop = System.getProperties();
-        System.out.println(email.getSenderEmail());
+        // TODO: 16/11/2022  Corrigir metodo veriftEmail não está funcionando
+//        if (!verifyEmail(email.getRecipientEmail())) {
+//            return false;
+//        }
+        Properties props = System.getProperties();
         SMTPConfigEntity SMTPConfig = smtpConfigRepository.findSMTPConfigEntityBySenderEmail(email.getSenderEmail());
         final String fromEmail = SMTPConfig.getSenderEmail();
         final String password = SMTPConfig.getPassword();
 
-        prop.put("mail.smtp.host", SMTPConfig.getHost());
-        prop.put("mail.smtp.port", SMTPConfig.getPortSSL());
-        prop.put("mail.smtp.ssl.enable", "true");
-        prop.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.host", SMTPConfig.getHost());
+        props.put("mail.smtp.port", SMTPConfig.getPortSSL());
+        props.put("mail.smtp.ssl.enable", "true");
+        props.put("mail.smtp.auth", "true");
 
-        Session session = Session.getInstance(prop, new javax.mail.Authenticator() {
-            protected PasswordAuthentication getPasswordAuthentication() {
-                return new PasswordAuthentication(fromEmail, password);
-            }
-        });
-
+        Session session = Session.getInstance(props,
+                new javax.mail.Authenticator() {
+                    protected PasswordAuthentication getPasswordAuthentication() {
+                        return new PasswordAuthentication(fromEmail, password);
+                    }
+                });
+//        session.setDebug(true);
         try {
             Message message = new MimeMessage(session);
             message.setFrom(new InternetAddress(SMTPConfig.getSenderEmail()));
@@ -54,13 +57,9 @@ public class EmailService {
             message.setSubject(email.getSubject());
             message.setText(email.getBody());
             Transport.send(message);
-        }catch (MessagingException mex){
-            mex.printStackTrace();
+        } catch (MessagingException mex) {
+            return false;
         }
-//        if (!verifyEmail(email.getSenderEmail(), email.getRecipientEmail())){
-//            return false;
-//        }
-//
         return true;
     }
 }

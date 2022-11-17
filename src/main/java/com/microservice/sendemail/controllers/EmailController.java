@@ -15,7 +15,6 @@ public class EmailController {
 
     @PostMapping("/email/send")
     public boolean receiveEmailRequest(@RequestBody EmailEntitiy email){
-         emailService.sendEmail(email);
-         return true;
+         return emailService.sendEmail(email);
     }
 }
