@@ -22,17 +22,16 @@ public class EmailService {
 
     private boolean verifyEmail(String emailRecipient) {
         boolean flag;
-        String regex = "^[A-Za-z0-9+_.-] +@ (.+)$";
+        String regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
         Pattern pattern = Pattern.compile(regex);
         flag = pattern.matcher(emailRecipient).matches();
         return flag;
     }
 
     public boolean sendEmail(EmailEntitiy email) {
-        // TODO: 16/11/2022  Corrigir metodo veriftEmail não está funcionando
-//        if (!verifyEmail(email.getRecipientEmail())) {
-//            return false;
-//        }
+        if (!verifyEmail(email.getRecipientEmail())) {
+            return false;
+        }
         Properties props = System.getProperties();
         SMTPConfigEntity SMTPConfig = smtpConfigRepository.findSMTPConfigEntityBySenderEmail(email.getSenderEmail());
         final String fromEmail = SMTPConfig.getSenderEmail();
