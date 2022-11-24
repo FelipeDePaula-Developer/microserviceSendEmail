@@ -20,7 +20,7 @@ public class EmailService {
     @Autowired
     SMTPConfigRepository smtpConfigRepository;
 
-    private boolean verifyEmail(String emailRecipient) {
+    protected boolean verifyEmail(String emailRecipient) {
         boolean flag;
         String regex = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$";
         Pattern pattern = Pattern.compile(regex);
